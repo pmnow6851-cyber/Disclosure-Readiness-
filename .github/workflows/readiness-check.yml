@@ -1,0 +1,31 @@
+name: DISCLOSURE Readiness Check
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-integrity:
+    name: Draft Static Integrity
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out reviewed repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Validate required docs and placeholder
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s README.md
+          test -s SECURITY.md
+          test -s docs/RELEASE-GATES.md
+          test -s site/index.html
+          test -s site/styles.css
+          grep -Fq 'not live' site/index.html
+          ! grep -Eqi 'sk_live_[A-Za-z0-9]{10,}|whsec_[A-Za-z0-9]{10,}|-----BEGIN .*PRIVATE KEY' README.md SECURITY.md site/index.html site/styles.css
+          echo "Draft static integrity: PASS; this is NOT a release approval."

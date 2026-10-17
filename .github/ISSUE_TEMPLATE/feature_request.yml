@@ -1,0 +1,18 @@
+name: Feature proposal
+description: Suggest a public-safe enhancement without confidential information.
+title: "[Feature] "
+labels: []
+body:
+  - type: textarea
+    id: outcome
+    attributes:
+      label: User outcome
+      description: Describe the benefit without supplying personal data or evidence.
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Privacy, security and £0-cost considerations
+    validations:
+      required: true

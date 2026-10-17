@@ -1,0 +1,22 @@
+name: Public-safe bug report
+description: Report a generic technical bug only; NEVER submit evidence or personal information.
+title: "[Bug] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: "This is a PUBLIC repository. Do not include testimonies, screenshots of private people, identifiers, private URLs, access tokens, medical information or confidential evidence."
+  - type: textarea
+    id: problem
+    attributes:
+      label: Generic technical problem
+      description: Describe only public, non-sensitive behaviour.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Safe reproduction steps
+      description: No account credentials, customer records, private URLs or evidence files.
+    validations:
+      required: true
