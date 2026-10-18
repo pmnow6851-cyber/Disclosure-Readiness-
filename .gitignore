@@ -1,0 +1,24 @@
+# Convenience only. Ignore rules do not protect already tracked files or Git history.
+.env
+.env.*
+*.pem
+*.p8
+*.p12
+*.pfx
+*.key
+*.keystore
+*.jks
+*.sqlite
+*.sqlite3
+*.db
+*.csv
+id_rsa
+id_ed25519
+google-services.json
+
+# Private research and sensitive records must never be stored in this public repo.
+evidence/
+private/
+records/
+customer-data/
+exports/
