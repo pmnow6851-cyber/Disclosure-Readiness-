@@ -1,0 +1,2 @@
+# Public issues remain public; this only removes the blank-issue shortcut.
+blank_issues_enabled: false
