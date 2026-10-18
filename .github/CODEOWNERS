@@ -1,0 +1,4 @@
+# Ownership declaration; this file alone does not enforce approval.
+# Owner-required reviews need a verified branch protection rule or ruleset.
+# This file is only proposed on the draft branch until merged.
+* @pmnow6851-cyber

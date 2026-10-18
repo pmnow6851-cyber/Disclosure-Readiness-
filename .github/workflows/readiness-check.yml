@@ -1,0 +1,55 @@
+name: DISCLOSURE Readiness Check
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-integrity:
+    name: Draft Static Guard (not release approval)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out reviewed repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Validate public-only placeholder and common hazards
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s README.md
+          test -s SECURITY.md
+          test -s docs/RELEASE-GATES.md
+          test -s docs/STATUS.md
+          test -s site/index.html
+          test -s site/styles.css
+          grep -Fq 'not live' site/index.html
+
+          # Block common sensitive filenames across tracked files.
+          bad=0
+          while IFS= read -r file; do
+            case "${file##*/}" in
+              .env|.env.*|*.pem|*.p8|*.p12|*.pfx|*.key|*.keystore|*.jks|*.db|*.sqlite|*.sqlite3|*.csv|id_rsa|id_ed25519|google-services.json)
+                bad=1 ;;
+            esac
+            case "$file" in
+              evidence/*|private/*|records/*|customer-data/*|exports/*)
+                bad=1 ;;
+            esac
+          done < <(git ls-files)
+          if [ "$bad" -ne 0 ]; then
+            echo "FAIL: tracked content contains a disallowed private-data filename or directory." >&2
+            exit 1
+          fi
+
+          # Avoid printing potential token content to public build logs.
+          # This detects selected patterns only; it is not a comprehensive secret scan.
+          if git grep -qI -E -- '(sk_live_[A-Za-z0-9]{10,}|whsec_[A-Za-z0-9]{10,}|-----BEGIN ([A-Z ]+ )?PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{20,}|AKIA[0-9A-Z]{16})' -- .; then
+            echo "FAIL: a tracked text file contains a possible credential marker." >&2
+            exit 1
+          fi
+          echo "Draft public-source guard: PASS (limited checks only; not a security certificate or release approval)."
